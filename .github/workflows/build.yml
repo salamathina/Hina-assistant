@@ -1,0 +1,33 @@
+name: Build Hina APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install Flet
+        run: pip install flet
+      
+      - name: Build APK
+        run: |
+          flet create hina_app
+          cd hina_app
+          cp ../main.py .
+          cp ../requirements.txt .
+          flet build apk
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hina-APK
+          path: hina_app/build/apk/debug/*.apk
